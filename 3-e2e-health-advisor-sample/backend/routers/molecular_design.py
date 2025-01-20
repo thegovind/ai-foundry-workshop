@@ -12,8 +12,17 @@ import os
 import logging
 from concurrent.futures import ThreadPoolExecutor
 
+# 📊 OpenTelemetry imports for distributed tracing
+from opentelemetry import trace
+from opentelemetry.trace import Status, StatusCode
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+
 # Configure logging
 logger = logging.getLogger(__name__)
+
+# Initialize tracer for this module
+tracer = trace.get_tracer(__name__)
 
 # 🧪 Azure AI SDK Imports - Powering our molecular analysis with Azure's AI capabilities!
 from azure.identity import DefaultAzureCredential
@@ -153,14 +162,22 @@ async def analyze_molecule(
     The analysis uses state-of-the-art models to provide comprehensive insights
     into the drug candidate's potential therapeutic value.
     """
-    logger.info(f"🔍 Analyzing molecule {molecule_data.id} for {molecule_data.therapeutic_area}")
-    try:
-        # 🧪 Validate molecule data before AI analysis
-        if not molecule_data.target_proteins:
-            logger.warning("⚠️ No target proteins specified for analysis")
-        
-        # 🔬 Perform AI inference on molecule using Azure AI Inference SDK
+    # 📊 Start a new trace span for molecule analysis
+    # View traces at http://localhost:4318/v1/traces in the OpenTelemetry collector
+    with tracer.start_as_current_span("molecular_design.analyze") as span:
         try:
+            # Add relevant attributes to the span for better tracing
+            span.set_attribute("molecule.id", molecule_data.id)
+            span.set_attribute("molecule.type", molecule_data.molecule_type)
+            span.set_attribute("therapeutic.area", molecule_data.therapeutic_area)
+            
+            logger.info(f"🔍 Analyzing molecule {molecule_data.id} for {molecule_data.therapeutic_area}")
+            
+            # 🧪 Validate molecule data before AI analysis
+            if not molecule_data.target_proteins:
+                logger.warning("⚠️ No target proteins specified for analysis")
+            
+            # 🔬 Perform AI inference on molecule using Azure AI Inference SDK
             logger.info(f"🤖 Starting AI analysis for molecule {molecule_data.id}")
             inference_response = await inference_client.analyze_async(
                 deployment_name=MODEL_NAME,
@@ -189,12 +206,43 @@ async def analyze_molecule(
             molecule_data.predicted_safety = inference_response.get("safety_score", 0.0)
             molecule_data.ai_confidence = evaluation_result.get("confidence_score", 0.0)
             
+            analysis_results = {
+                "efficacy": molecule_data.predicted_efficacy,
+                "safety": molecule_data.predicted_safety,
+                "confidence": molecule_data.ai_confidence
+            }
+            
+            # Add analysis results to the trace span
+            span.set_attributes({
+                "analysis.efficacy": analysis_results["efficacy"],
+                "analysis.safety": analysis_results["safety"],
+                "analysis.confidence": analysis_results["confidence"]
+            })
+            span.set_status(Status(StatusCode.OK))
+            
             logger.info(f"📊 Analysis Results:"
-                       f"\n- Efficacy: {molecule_data.predicted_efficacy:.2%}"
-                       f"\n- Safety: {molecule_data.predicted_safety:.2%}"
-                       f"\n- Confidence: {molecule_data.ai_confidence:.2%}")
+                       f"\n- Efficacy: {analysis_results['efficacy']:.2%}"
+                       f"\n- Safety: {analysis_results['safety']:.2%}"
+                       f"\n- Confidence: {analysis_results['confidence']:.2%}")
             
         except AzureError as azure_err:
+            # Record error in trace span
+            span.set_status(Status(StatusCode.ERROR, str(azure_err)))
+            span.record_exception(azure_err)
+            logger.error(f"❌ Azure AI inference failed: {str(azure_err)}")
+            raise HTTPException(
+                status_code=500,
+                detail="AI analysis failed. Please try again later."
+            )
+        except Exception as e:
+            # Record unexpected error in trace span
+            span.set_status(Status(StatusCode.ERROR, str(e)))
+            span.record_exception(e)
+            logger.error(f"❌ Unexpected error during analysis: {str(e)}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Error analyzing molecule: {str(e)}"
+            )
             error_msg = f"❌ Azure AI inference failed: {str(azure_err)}"
             logger.error(error_msg)
             raise HTTPException(

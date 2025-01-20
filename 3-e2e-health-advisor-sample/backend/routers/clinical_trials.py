@@ -5,9 +5,19 @@ from database import get_db
 from models.tables import ClinicalTrialTable, PatientDataTable
 from models.clinical_trial import ClinicalTrial, TrialPhase, TrialStatus
 from datetime import datetime
-# Temporarily disable OpenTelemetry
-# from opentelemetry import trace
-# tracer = trace.get_tracer(__name__)
+import logging
+
+# 📊 OpenTelemetry imports for distributed tracing
+from opentelemetry import trace
+from opentelemetry.trace import Status, StatusCode
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+# Initialize tracer for this module
+tracer = trace.get_tracer(__name__)
 
 router = APIRouter(tags=["clinical-trials"])
 
@@ -16,9 +26,6 @@ async def monitor_trials(
     trial_id: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    # Temporarily disable OpenTelemetry tracing
-    # with tracer.start_as_current_span("clinical_trials.monitor") as span:
-    #     span.set_attribute("trial_id", trial_id)
     """
     Real-time monitoring of:
     - trial parameters
@@ -26,6 +33,12 @@ async def monitor_trials(
     - patient responses
     - adaptive trial adjustments
     """
+    # 📊 Start a new trace span for trial monitoring
+    # View traces at http://localhost:4318/v1/traces in the OpenTelemetry collector
+    with tracer.start_as_current_span("clinical_trials.monitor") as span:
+        # Add relevant attributes to the span
+        span.set_attribute("trial.id", trial_id if trial_id else "all")
+        span.set_attribute("operation", "monitor")
     trial = db.query(ClinicalTrialTable).filter(ClinicalTrialTable.trial_id == trial_id).first()
     if not trial:
         raise HTTPException(status_code=404, detail="Trial not found")
@@ -66,11 +79,16 @@ async def predict_patient_response(
     patient_id: str,
     db: Session = Depends(get_db)
 ):
-    # Temporarily disable OpenTelemetry tracing
-    # with tracer.start_as_current_span("clinical_trials.predict_response") as span:
-    #     span.set_attribute("trial_id", trial_id)
-    #     span.set_attribute("patient_id", patient_id)
     """Predict individual patient response based on biomarkers and demographics"""
+    # 📊 Start a new trace span for patient response prediction
+    # View traces at http://localhost:4318/v1/traces in the OpenTelemetry collector
+    with tracer.start_as_current_span("clinical_trials.predict_response") as span:
+        # Add relevant attributes to the span
+        span.set_attributes({
+            "trial.id": trial_id,
+            "patient.id": patient_id,
+            "operation": "predict_response"
+        })
     patient = db.query(PatientDataTable).filter(PatientDataTable.patient_id == patient_id).first()
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
