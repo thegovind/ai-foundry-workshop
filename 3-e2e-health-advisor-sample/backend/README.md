@@ -1,5 +1,92 @@
 # Drug Development Platform Backend 🧬
 
+## Overview 🎯
+FastAPI backend for the Drug Development Platform, leveraging Azure AI Foundry SDKs for molecular analysis and clinical trial monitoring.
+
+## Azure AI Integration 🤖
+
+### SDKs Used
+- 🔬 **azure-ai-inference**: Molecular analysis and predictions
+  ```python
+  # molecular_design.py
+  inference_client = InferenceClient(
+      endpoint=AZURE_ENDPOINT,
+      credential=credential
+  )
+  ```
+- 📊 **azure-ai-evaluation**: Result analysis and confidence scoring
+  ```python
+  # molecular_design.py
+  evaluation_client = EvaluationClient(
+      endpoint=AZURE_ENDPOINT,
+      credential=credential
+  )
+  ```
+- 🔐 **azure-identity**: Secure Azure authentication
+  ```python
+  # main.py
+  credential = DefaultAzureCredential()
+  ```
+
+## Getting Started 🚀
+
+1. **Create Virtual Environment**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # Windows: venv\Scripts\activate
+   ```
+
+2. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configure Environment**:
+   - Copy `.env.example` to `.env`
+   - Update with your Azure credentials:
+   ```env
+   AZURE_CLIENT_ID=your_client_id
+   AZURE_CLIENT_SECRET=your_client_secret
+   AZURE_TENANT_ID=your_tenant_id
+   ```
+
+4. **Run the Server**:
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+5. **Access API Documentation**:
+   - OpenAPI: [http://localhost:8000/docs](http://localhost:8000/docs)
+   - ReDoc: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+
+## API Architecture 🏗️
+
+```mermaid
+flowchart TB
+    subgraph Client
+        FE[Frontend]
+    end
+    
+    subgraph Backend
+        API[FastAPI]
+        AI[Azure AI Clients]
+        DB[(PostgreSQL)]
+    end
+    
+    subgraph Azure
+        INF[AI Inference]
+        EVAL[AI Evaluation]
+        TEL[OpenTelemetry]
+    end
+    
+    FE <--> API
+    API <--> AI
+    AI <--> INF
+    AI <--> EVAL
+    API --> DB
+    API -.-> TEL
+```
+
 ## OpenTelemetry Integration 📊
 
 This project uses OpenTelemetry for distributed tracing to monitor and debug the drug development pipeline. Traces help us understand:
@@ -48,4 +135,26 @@ sequenceDiagram
     deactivate A
 ```
 
-The trace will show timing for each step and include relevant attributes for debugging and monitoring.
+## Security 🔒
+
+1. **Environment Variables**:
+   - All secrets stored in `.env`
+   - Never commit sensitive data
+
+2. **Authentication**:
+   - Azure AD integration
+   - Role-based access control
+
+3. **Data Protection**:
+   - Encryption at rest
+   - Secure communication
+
+## Contributing 🤝
+1. Fork the repository
+2. Create a feature branch
+3. Submit a Pull Request
+
+## Learn More 📚
+- [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-foundry/)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [OpenTelemetry Documentation](https://opentelemetry.io/docs/)

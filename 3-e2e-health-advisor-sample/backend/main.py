@@ -3,8 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.openapi.docs import get_redoc_html
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
+# Temporarily disable Azure imports
+# from azure.identity import DefaultAzureCredential
+# from azure.ai.projects import AIProjectClient
 from datetime import datetime
 import logging
 import os
