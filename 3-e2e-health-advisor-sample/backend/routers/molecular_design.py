@@ -8,7 +8,56 @@ from models.drug_candidate import DrugCandidate, MoleculeType
 from models.automated_test import TestResult
 from datetime import datetime
 import asyncio
+import os
+import logging
 from concurrent.futures import ThreadPoolExecutor
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+# 🧪 Azure AI SDK Imports - Powering our molecular analysis with Azure's AI capabilities!
+from azure.identity import DefaultAzureCredential
+from azure.ai.inference import InferenceClient
+from azure.ai.evaluation import EvaluationClient
+from azure.core.exceptions import AzureError
+
+# 🔐 Load Azure configurations from environment variables (keeping our secrets safe!)
+AZURE_ENDPOINT = os.getenv("PROJECT_CONNECTION_STRING")
+MODEL_NAME = os.getenv("MODEL_DEPLOYMENT_NAME")
+
+if not AZURE_ENDPOINT or not MODEL_NAME:
+    error_msg = "❌ Missing required Azure configuration. Please check PROJECT_CONNECTION_STRING and MODEL_DEPLOYMENT_NAME"
+    logger.error(error_msg)
+    raise ValueError(error_msg)
+
+# 🚀 Initialize Azure AI clients
+logger.info("🔧 Initializing Azure AI clients...")
+try:
+    # 🎫 Get Azure credentials
+    credential = DefaultAzureCredential()
+    
+    # 🤖 Create inference client for AI predictions
+    inference_client = InferenceClient(
+        endpoint=AZURE_ENDPOINT,
+        credential=credential
+    )
+    logger.info("✅ Successfully initialized Azure AI Inference client")
+    
+    # 📊 Create evaluation client for result analysis
+    evaluation_client = EvaluationClient(
+        endpoint=AZURE_ENDPOINT,
+        credential=credential
+    )
+    logger.info("✅ Successfully initialized Azure AI Evaluation client")
+    
+except AzureError as azure_err:
+    error_msg = f"❌ Azure authentication failed: {str(azure_err)}"
+    logger.error(error_msg)
+    raise ValueError(error_msg)
+except Exception as e:
+    error_msg = f"❌ Unexpected error initializing Azure clients: {str(e)}"
+    logger.error(error_msg)
+    raise ValueError(error_msg)
 from utils.molecular_analysis import (
     analyze_genetic_compatibility,
     analyze_biomarker_interaction,
@@ -92,25 +141,76 @@ async def analyze_molecule(
     molecule_data: DrugCandidate,
     db: Session = Depends(get_db)
 ):
-    # Temporarily disable OpenTelemetry tracing
-    # with tracer.start_as_current_span("molecular_design.analyze") as span:
-    #     span.set_attribute("molecule_id", molecule_data.id)
-    #     span.set_attribute("therapeutic_area", molecule_data.therapeutic_area)
     """
-    Analyze molecular properties and predict:
-    - efficacy
-    - safety
-    - potential side effects
+    🧬 Analyze molecular properties using Azure AI Inference
+    
+    This endpoint leverages Azure's AI capabilities to predict:
+    - 💊 Drug efficacy
+    - 🛡️ Safety profile
+    - ⚠️ Potential side effects
+    - 🎯 Target protein interactions
+    
+    The analysis uses state-of-the-art models to provide comprehensive insights
+    into the drug candidate's potential therapeutic value.
     """
+    logger.info(f"🔍 Analyzing molecule {molecule_data.id} for {molecule_data.therapeutic_area}")
     try:
-        # Encrypt sensitive molecular data
+        # 🧪 Validate molecule data before AI analysis
+        if not molecule_data.target_proteins:
+            logger.warning("⚠️ No target proteins specified for analysis")
+        
+        # 🔬 Perform AI inference on molecule using Azure AI Inference SDK
+        try:
+            logger.info(f"🤖 Starting AI analysis for molecule {molecule_data.id}")
+            inference_response = await inference_client.analyze_async(
+                deployment_name=MODEL_NAME,
+                data={
+                    "molecule_type": molecule_data.molecule_type,
+                    "molecular_weight": molecule_data.molecular_weight,
+                    "therapeutic_area": molecule_data.therapeutic_area,
+                    "target_proteins": molecule_data.target_proteins
+                }
+            )
+            logger.info("✅ AI inference completed successfully")
+            
+            # 📈 Evaluate results using Azure AI Evaluation SDK
+            logger.info("📊 Evaluating AI predictions...")
+            evaluation_result = await evaluation_client.evaluate_async(
+                deployment_name=MODEL_NAME,
+                data={
+                    "inference_result": inference_response,
+                    "ground_truth": None  # For new molecules, we don't have ground truth
+                }
+            )
+            logger.info("✅ AI evaluation completed successfully")
+            
+            # 🎯 Update molecule data with AI insights
+            molecule_data.predicted_efficacy = inference_response.get("efficacy_score", 0.0)
+            molecule_data.predicted_safety = inference_response.get("safety_score", 0.0)
+            molecule_data.ai_confidence = evaluation_result.get("confidence_score", 0.0)
+            
+            logger.info(f"📊 Analysis Results:"
+                       f"\n- Efficacy: {molecule_data.predicted_efficacy:.2%}"
+                       f"\n- Safety: {molecule_data.predicted_safety:.2%}"
+                       f"\n- Confidence: {molecule_data.ai_confidence:.2%}")
+            
+        except AzureError as azure_err:
+            error_msg = f"❌ Azure AI inference failed: {str(azure_err)}"
+            logger.error(error_msg)
+            raise HTTPException(
+                status_code=500,
+                detail="AI analysis failed. Please try again later."
+            )
+            
+        # 🔒 Encrypt sensitive molecular data
         encrypted_data = data_encryption.encrypt_molecule_data({
             "target_proteins": molecule_data.target_proteins,
             "mechanism_of_action": molecule_data.development_stage,
             "properties": {
                 "side_effects": molecule_data.side_effects,
                 "development_timeline": [],
-                "confidential_notes": []
+                "confidential_notes": [],
+                "ai_analysis": inference_response
             }
         })
         
