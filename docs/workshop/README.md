@@ -2,7 +2,7 @@
 
 This hands-on workshop guides you through building AI-native applications using Azure AI Foundry, with examples related to health and dietary advice.
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Azure/ai-foundry-workshop)
 
 You can run this workshop in several ways:
 1. **GitHub Codespaces**: Click the button above to start coding in your browser
@@ -14,32 +14,30 @@ You can run this workshop in several ways:
 2. 🔄 Fork it to your account to start building
 3. 📝 Follow the learning path below
 
-Each notebook includes a direct link to open it in Codespaces for your convenience.
-
 ## Learning Path
 
 ### 1. Introduction (30 minutes)
-- [Authentication](../1-introduction/1-authentication.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1): Set up Azure credentials
-- [Environment Setup](../1-introduction/2-environment_setup.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1): Configure development environment
-- [Quick Start](../1-introduction/3-quick_start.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1): Basic Azure AI operations
+- [Authentication](../1-introduction/1-authentication.ipynb): Set up Azure credentials
+- [Environment Setup](../1-introduction/2-environment_setup.ipynb): Configure development environment
+- [Quick Start](../1-introduction/3-quick_start.ipynb): Basic Azure AI operations
 
 ### 2. Chat Completion & RAG (1 hour)
-- [Basic Chat Completion](../2-notebooks/1-chat_completion/1-basic-chat-completion.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1)
-- [Embeddings](../2-notebooks/1-chat_completion/2-embeddings.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1)
-- [Basic RAG](../2-notebooks/1-chat_completion/3-basic-rag.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1)
-- [Phi-4 Model](../2-notebooks/1-chat_completion/4-phi-4.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1)
+- [Basic Chat Completion](../2-notebooks/1-chat_completion/1-basic-chat-completion.ipynb)
+- [Embeddings](../2-notebooks/1-chat_completion/2-embeddings.ipynb)
+- [Basic RAG](../2-notebooks/1-chat_completion/3-basic-rag.ipynb)
+- [Phi-4 Model](../2-notebooks/1-chat_completion/4-phi-4.ipynb)
 
 ### 3. Building AI Agents (2 hours)
-- [Agent Basics](../2-notebooks/2-agent_service/1-basics.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1)
-- [Code Interpreter](../2-notebooks/2-agent_service/2-code_interpreter.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1)
-- [File Search](../2-notebooks/2-agent_service/3-file-search.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1)
-- [Bing Grounding](../2-notebooks/2-agent_service/4-bing_grounding.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1)
-- [AI Search Integration](../2-notebooks/2-agent_service/5-agents-aisearch.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1)
-- [Azure Functions Deployment](../2-notebooks/2-agent_service/6-agents-az-functions.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1)
+- [Agent Basics](../2-notebooks/2-agent_service/1-basics.ipynb)
+- [Code Interpreter](../2-notebooks/2-agent_service/2-code_interpreter.ipynb)
+- [File Search](../2-notebooks/2-agent_service/3-file-search.ipynb)
+- [Bing Grounding](../2-notebooks/2-agent_service/4-bing_grounding.ipynb)
+- [AI Search Integration](../2-notebooks/2-agent_service/5-agents-aisearch.ipynb)
+- [Azure Functions Deployment](../2-notebooks/2-agent_service/6-agents-az-functions.ipynb)
 
 ### 4. Quality & Monitoring (30 minutes)
-- [Observability](../2-notebooks/3-quality_attributes/1-Observability.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1)
-- [Evaluation](../2-notebooks/3-quality_attributes/2-evaluation.ipynb) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thegovind/ai-foundry-workshop?quickstart=1)
+- [Observability](../2-notebooks/3-quality_attributes/1-Observability.ipynb)
+- [Evaluation](../2-notebooks/3-quality_attributes/2-evaluation.ipynb)
 
 ### 5. E2E Sample Application (1 hour)
 Build a complete AI-native health advisor application:
