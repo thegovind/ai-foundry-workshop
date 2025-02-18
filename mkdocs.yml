@@ -65,6 +65,7 @@ nav:
       - Notebook: docs/2-notebooks/2-agent_service/3-file-search.ipynb
     - Agent Tools: agents/tools.md
     - Design Patterns: agents/design.md
+    - Implementation Patterns: agents/patterns.md
     - Implementation: agents/implementation.md
     - Service Integration: agents/service.md
   - E2E Sample:
