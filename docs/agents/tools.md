@@ -15,8 +15,8 @@ agent = project_client.agents.create(
 )
 ```
 
-### 2. Code Interpreter Tool
-The Code Interpreter tool allows agents to execute Python code for data analysis and calculations.
+### 2. Code Interpreter Tool 【†L5】
+The Code Interpreter tool allows agents to execute Python code for data analysis and calculations. Learn more about [agent tools](https://learn.microsoft.com/azure/ai-services/agents/concepts/tools).
 
 ```python
 from azure.ai.projects.models import CodeInterpreterTool
@@ -28,8 +28,8 @@ agent = project_client.agents.create(
 )
 ```
 
-### 3. Bing Grounding Tool
-Ground agent responses in real-time web data using Bing Search.
+### 3. Bing Grounding Tool 【†L6】
+Ground agent responses in real-time web data using [Bing Search](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/bing-grounding).
 
 ```python
 from azure.ai.projects.models import BingGroundingTool

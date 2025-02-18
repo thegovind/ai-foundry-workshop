@@ -72,6 +72,9 @@ nav:
     - Architecture: e2e-sample/architecture.md
     - Backend Implementation: 3-ai-native-e2e-sample/backend/README.md
     - Frontend Implementation: 3-ai-native-e2e-sample/frontend/README.md
+  - Azure Integrations:
+    - Service Overview: integrations/azure-services.md
+    - Prerequisites: integrations/prerequisites.md
   - Introduction:
     - introduction/index.md
     - Getting Started: introduction/overview.md
