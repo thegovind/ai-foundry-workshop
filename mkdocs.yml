@@ -75,6 +75,9 @@ nav:
   - Azure Integrations:
     - Service Overview: integrations/azure-services.md
     - Prerequisites: integrations/prerequisites.md
+  - Evaluation & Monitoring:
+    - Metrics & Observability: evaluation/metrics.md
+    - Performance Tracking: evaluation/monitoring.md
   - Introduction:
     - introduction/index.md
     - Getting Started: introduction/overview.md
