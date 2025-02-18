@@ -1,9 +1,9 @@
-# AI Agent Tools in Azure AI Foundry 🛠️
+# AI Agent Tools in Azure AI Foundry 🛠️ 【†L3】
 
 ## Available Tools
 
-### 1. File Search Tool
-The File Search tool enables agents to search through document repositories using Azure AI Search's vector capabilities.
+### 1. File Search Tool 【†L4】
+The File Search tool enables agents to search through document repositories using [Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search)'s vector capabilities.
 
 ```python
 from azure.ai.projects.models import FileSearchTool

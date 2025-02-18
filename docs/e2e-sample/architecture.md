@@ -7,9 +7,10 @@ The end-to-end sample demonstrates a complete AI-native application using Azure 
 
 ### Backend Services
 - FastAPI application
-- Azure AI Foundry SDKs integration
+- [Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry) SDKs integration 【†L1】
+- [Azure Functions](https://learn.microsoft.com/azure/azure-functions) for serverless compute 【†L9】
 - OpenTelemetry instrumentation
-- Event-driven architecture
+- Event-driven architecture with [Logic Apps](https://learn.microsoft.com/azure/logic-apps) 【†L8】
 
 ### Frontend Application
 - React with Vite
