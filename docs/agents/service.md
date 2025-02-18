@@ -1,6 +1,6 @@
-# AI Agent Service Overview
+# Azure AI Foundry Agent Service Overview
 
-Azure AI Agent Service provides a comprehensive platform for building, deploying, and managing intelligent agents in your applications.
+Azure AI Foundry provides a comprehensive platform for building, deploying, and managing intelligent agents in your applications. This service is part of the Azure AI Foundry ecosystem, offering seamless integration with other Azure AI services.
 
 ## Service Architecture
 
